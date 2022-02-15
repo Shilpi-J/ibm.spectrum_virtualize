@@ -38,50 +38,55 @@ jobs:
       - name: Run sanity tests spectrum_virtualize
         run: ansible-test sanity --docker -v --color
         working-directory: ansible_collections/ibm/spectrum_virtualize
+                        
+      # Run the unit tests
+      - name: Run unit test
+        run: ansible-test units --docker -v --color --requirements
+        working-directory: ansible_collections/ibm/spectrum_virtualize
         
-  units:
-    runs-on: ubuntu-latest
-    name: Units (Ⓐ${{ matrix.ansible }})
-    strategy:
-      # As soon as the first unit test fails, cancel the others to free up the CI queue
-      fail-fast: true
-      matrix:
-        ansible:
-          - stable-2.9
-          - stable-2.10
-          - stable-2.11
-          - stable-2.12
-          
-    steps:
-      - name: Check out code
-        uses: actions/checkout@v2
+  #units:
+  #  runs-on: ubuntu-latest
+  #  name: Units (Ⓐ${{ matrix.ansible }})
+  #  strategy:
+  #    # As soon as the first unit test fails, cancel the others to free up the CI queue
+  #    fail-fast: true
+  #    matrix:
+  #      ansible:
+  #        - stable-2.9
+  #        - stable-2.10
+  #        - stable-2.11
+  #        - stable-2.12
+  #        
+  #  steps:
+  #    - name: Check out code
+  #      uses: actions/checkout@v2
 
-      - name: Set up Python
-        uses: actions/setup-python@v2
-        with:
-          # it is just required to run that once as "ansible-test units" in the docker image
-          # will run on all python versions it supports.
-          python-version: 3.8
+#      - name: Set up Python
+#        uses: actions/setup-python@v2
+#        with:
+#          # it is just required to run that once as "ansible-test units" in the docker image
+#          # will run on all python versions it supports.
+#          python-version: 3.8
 
-      - name: Install ansible (${{ matrix.ansible }})
-        run: pip install https://github.com/ansible/ansible/archive/${{ matrix.ansible }}.tar.gz --disable-pip-version-check
+#      - name: Install ansible (${{ matrix.ansible }})
+#        run: pip install https://github.com/ansible/ansible/archive/${{ matrix.ansible }}.tar.gz --disable-pip-version-check
 
-      - name: Make directory for ansible-test 
-        run: |
-          pwd
-          mkdir -p ansible_collections/ibm/spectrum_virtualize
-          rsync -av . ansible_collections/ibm/spectrum_virtualize --exclude ansible_collections/ibm/spectrum_virtualize
+#      - name: Make directory for ansible-test 
+#        run: |
+#          pwd
+#          mkdir -p ansible_collections/ibm/spectrum_virtualize
+#          rsync -av . ansible_collections/ibm/spectrum_virtualize --exclude ansible_collections/ibm/spectrum_virtualize
+#          
+#      - name: Install dependencies
+#        run: |
+#          python -m pip install --upgrade pip
+#          if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
           
-      - name: Install dependencies
-        run: |
-          python -m pip install --upgrade pip
-          if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
-          
-      # Run the unit tests
-      - name: Run unit test
-        run: ansible-test units --docker -v --color --requirements --python 2.7
-        working-directory: ansible_collections/ibm/spectrum_virtualize
-      # Run the unit tests
-      - name: Run unit test
-        run: ansible-test units --docker -v --color --python 3.8
-        working-directory: ansible_collections/ibm/spectrum_virtualize
+#      # Run the unit tests
+#      - name: Run unit test
+#        run: ansible-test units --docker -v --color --requirements --python 2.7
+#        working-directory: ansible_collections/ibm/spectrum_virtualize
+#      # Run the unit tests
+#      - name: Run unit test
+#        run: ansible-test units --docker -v --color --python 3.8
+#        working-directory: ansible_collections/ibm/spectrum_virtualize
